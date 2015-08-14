@@ -1,2 +1,2 @@
-# tentacle-edison
-Tentacle for the Edison
+# meshblu-tentacle-serial
+A connector for Tentacle over serials
