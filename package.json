@@ -2,7 +2,7 @@
   "name": "tentacle-edison",
   "repository": "octoblu/tentacle-edison",
   "version": "1.0.0",
-  "main": "tentacle.js",
+  "main": "tentacle-edison.js",
   "scripts": {
     "preinstall": "node -e \"try{require('./skip-install.js')}catch(e){}\"",
     "start": "node command.js",
