@@ -1,8 +1,13 @@
 {EventEmitter} = require 'events'
 through = require 'through'
-mraa = require 'mraa'
 debug   = require('debug')('tentacle:client')
 _ = require 'lodash'
+
+try
+  mraa = require 'mraa'
+catch
+  console.warn 'mraa not found, using mock-mraa'
+  mraa = require './mock-mraa'
 
 class Tentacle extends EventEmitter
   constructor: (tentacleConn) ->
@@ -34,7 +39,7 @@ class Tentacle extends EventEmitter
 
     @config = config
 
-    @config.pins, (pin) =>
+    _.each @config.pins, (pin) =>
       try
         @_setPinAction pin
       catch error
