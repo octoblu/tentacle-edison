@@ -1,5 +1,4 @@
 {EventEmitter} = require 'events'
-through = require 'through'
 debug   = require('debug')('tentacle:client')
 _ = require 'lodash'
 

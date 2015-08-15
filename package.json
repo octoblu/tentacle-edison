@@ -12,8 +12,7 @@
     "coffee-script": "^1.9.0",
     "debug": "^2.1.0",
     "lodash": "^3.10.0",
-    "meshblu": "^1.22.0",
-    "tentacle-protocol-buffer": "^1.0.8"
+    "meshblu": "^1.22.0"
   },
   "bundledDependencies": [
     "request",

@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "required": [
+    "pins"
+  ],
+  "properties": {
+    "customData" : {
+      "type": "string"
+    },
+    "pins": {
+     "title": "Pin Configuration",
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "title": "Number",
+            "type": "integer",
+            "minimum": 0,
+            "default": 13
+          },
+          "action": {
+            "title": "Action",
+            "type": "string",
+             "enum": [
+              "digitalRead" ,
+              "digitalWrite" ,
+              "analogRead",
+              "analogWrite",
+              "servoWrite",
+              "pwmWrite",
+              "i2cWrite",
+              "i2cRead"
+               ]
+          },
+          "value": {
+            "type": "integer",
+            "default": 1
+          }
+        },
+        "required": [
+          "number",
+          "action"
+        ]
+      }
+    }
+  }
+}

@@ -5,8 +5,8 @@ _              = require 'lodash'
 debug          = require('debug')('tentacle')
 TentacleEdison = require './tentacle-edison'
 
-MESSAGE_SCHEMA        = require 'tentacle-protocol-buffer/message-schema.json'
-tentacleOptionsSchema = require 'tentacle-protocol-buffer/options-schema.json'
+MESSAGE_SCHEMA        = require './message-schema.json'
+tentacleOptionsSchema = require './options-schema.json'
 
 OPTIONS_SCHEMA =
   port:
