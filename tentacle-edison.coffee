@@ -20,10 +20,13 @@ class Tentacle extends EventEmitter
       @emit 'error', error
 
   onMessage: (message) =>
-    return unless message?.payload?
+    pins = _.map @config.pins, (pin) =>
+      try
+        @_processPin pin
+      catch error
+        @emit 'error', error
 
-    @messageTentacle _.extend({}, message.payload, topic: 'action')
-
+    @_emitPins pins
 
   onConfig: (config) =>
     @_clearBroadcast()
@@ -33,7 +36,7 @@ class Tentacle extends EventEmitter
 
     @config.pins, (pin) =>
       try
-        @_setPinMode pin.number, pin.action
+        @_setPinAction pin
       catch error
         @emit 'error', error
 
@@ -47,11 +50,7 @@ class Tentacle extends EventEmitter
 
   _broadcastPins: =>
     pins = _.compact _.map(@config.pins, @_readPin)
-    @emit 'message',
-      version: 1
-      topic: 'action'
-      pins: pins
-      response: true
+    @_emitPins pins
 
   _clearPins: =>
     _.times 19, _setDigitalWrite
@@ -60,23 +59,42 @@ class Tentacle extends EventEmitter
     gpio = new mraa.Gpio pinNumber
     gpio.read()
 
+  _digitalWrite: (pinNumber, value) =>
+    gpio = new mraa.Gpio pinNumber
+    gpio.write value
+
+  _emitPins: (pins) =>
+    @emit 'message',
+      version: 1
+      topic: 'action'
+      pins: pins
+      response: true
+
+  _setPwmWrite: (pinNumber, value) =>
+    pwm = mraa.Pwm(pinNumber)
+    pwm.write value / 255.0
+
+  _processPin: (pin) =>
+    @_setPinAction pin
+    return @_readPin(pin) ? @_writePin(pin)
+
   _readPin: (pin) =>
     return unless _.contains ['digitalRead', 'analogRead'], pin.action
 
-    value = @_digitalRead pin.pinNumber if pin.action == 'digitalRead'
-    value = @_analogRead pin.pinNumber if pin.action == 'analogRead'
+    value = @_digitalRead pin.number if pin.action == 'digitalRead'
+    value = @_analogRead pin.number if pin.action == 'analogRead'
 
     {
       action: pin.action
-      number: pin.pinNumber
+      number: pin.number
       value:  value
     }
 
-  _setPinMode: (pinNumber, mode) =>
-    return @_setDigitalRead pinNumber  if mode == 'digitalRead'
-    return @_setDigitalWrite pinNumber if mode == 'digitalWrite'
-    return @_setAnalogRead pinNumber   if mode == 'analogRead'
-    return @_setPwmWrite pinNumber     if mode == 'pwmWrite'
+  _setPinAction: (pin) =>
+    return @_setDigitalRead pin.number  if pin.action == 'digitalRead'
+    return @_setDigitalWrite pin.number if pin.action == 'digitalWrite'
+    return @_setAnalogRead pin.number   if pin.action == 'analogRead'
+    return @_setPwmWrite pin.number     if pin.action == 'pwmWrite'
 
   _setAnalogRead: (pinNumber) =>
     aio = new mraa.Aio pinNumber
@@ -92,5 +110,17 @@ class Tentacle extends EventEmitter
 
   _setPwmWrite: (pinNumber) =>
     pwm = new mraa.Pwm pinNumber
+
+  _writePin: (pin) =>
+    return unless _.contains ['digitalWrite', 'pwmWrite'], pin.action
+
+    @_digitalWrite pin.number, pin.value if pin.action == 'digitalRead'
+    @_pwmWrite pin.number, pin.value if pin.action == 'pwmWrite'
+
+    {
+      action: pin.action
+      number: pin.number
+      value:  pin.value
+    }
 
 module.exports = Tentacle
