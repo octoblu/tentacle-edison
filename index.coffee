@@ -1,7 +1,5 @@
 'use strict';
 {EventEmitter} = require 'events'
-serialport     = require 'serialport'
-through        = require 'through'
 _              = require 'lodash'
 
 debug          = require('debug')('tentacle')
